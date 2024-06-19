@@ -1,20 +1,20 @@
 import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 
-// Input.propTypes = {
-//     type: PropTypes.oneOf(["text", "email", "password", "number", "file"]),
-//     name: PropTypes.string,
-//     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-//     defaultValue: PropTypes.string,
-//     variant: PropTypes.oneOf(["primary", "error"], "primary-outline"),
-//     required: PropTypes.bool,
-//     isFocused: PropTypes.bool,
-//     handleChange: PropTypes.func,
-//     placeholder: PropTypes.string,
-//     isError: PropTypes.bool,
-// };
+Input.propTypes = {
+    type: PropTypes.oneOf(["text", "email", "password", "number", "file"]),
+    name: PropTypes.string,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    defaultValue: PropTypes.string,
+    variant: PropTypes.oneOf(["primary", "error"], "primary-outline"),
+    required: PropTypes.bool,
+    isFocused: PropTypes.bool,
+    handleChange: PropTypes.func,
+    placeholder: PropTypes.string,
+    isError: PropTypes.bool,
+};
 
-const Input = ({
+export default function Input({
     type = "text",
     defaultValue,
     variant = "primary",
@@ -27,7 +27,7 @@ const Input = ({
     value,
     handleChange,
     name,
-}) => {
+}) {
     const input = useRef();
 
     useEffect(() => {
@@ -53,6 +53,4 @@ const Input = ({
             />
         </div>
     );
-};
-
-export default Input;
+}
