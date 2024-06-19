@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'checkUserSubscription' => App\Http\Middleware\CheckUserSubscription::class,
         ])
             ->web(append: [
                 \App\Http\Middleware\HandleInertiaRequests::class,
