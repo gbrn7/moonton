@@ -62,12 +62,12 @@ export default function Register() {
                                         type="password"
                                         name="password"
                                         placeholder="Your Password"
-                                        value="eeeeeeeeeeeeeee"
+                                        value="11111111"
                                     />
                                 </div>
                             </div>
                             <div className="grid space-y-[14px] mt-[30px]">
-                                <Link href="#">
+                                <Link href={route("prototype.dashboard")}>
                                     <Button>
                                         <span className="text-base font-semibold">
                                             Sign Up
