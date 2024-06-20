@@ -26,6 +26,8 @@ use Inertia\Inertia;
 //     return 'Hi User';
 // })->middleware('role:user');
 
+Route::post('/midtrans/notification', [SubscriptionPlanController::class, 'midtransCallback']);
+
 
 Route::redirect('/', '/login');
 
