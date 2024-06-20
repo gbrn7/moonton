@@ -67,6 +67,7 @@ Route::prefix('/prototype')->name('prototype.')->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('administrator')->name('administrator.dashboard.')->group(function () {
+    Route::put('/movie/{movie}/restore', [AdminMovieController::class, 'restore'])->name('movie.restore');
     Route::resource('movie', AdminMovieController::class);
 });
 
