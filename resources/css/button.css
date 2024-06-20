@@ -7,7 +7,7 @@
 }
 
 .btn-danger{
-  @apply bg-red-50 text-white;
+  @apply bg-red-500 text-white;
 }
 
 .btn-light-outline{
