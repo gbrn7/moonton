@@ -6,7 +6,7 @@ Input.propTypes = {
     name: PropTypes.string,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     defaultValue: PropTypes.string,
-    variant: PropTypes.oneOf(["primary", "error"], "primary-outline"),
+    variant: PropTypes.oneOf(["primary", "error", "primary-outline"]),
     required: PropTypes.bool,
     isFocused: PropTypes.bool,
     handleChange: PropTypes.func,
@@ -21,7 +21,7 @@ export default function Input({
     placeholder,
     className,
     isFocused,
-    iserror,
+    isError,
     required,
     autoComplete,
     value,
@@ -43,13 +43,14 @@ export default function Input({
                 name={name}
                 value={value}
                 defaultValue={defaultValue}
-                className={`rounded-2xl bg-form-bg py-[13px] px-7 w-full input-${variant} ${className}`}
+                className={`rounded-2xl bg-form-bg py-[13px] px-7 w-full input-${variant} ${className} ${
+                    isError && "input-error"
+                }`}
                 ref={input}
                 autoComplete={autoComplete}
                 onChange={(e) => handleChange(e)}
                 placeholder={placeholder}
                 required={required}
-                iserror={iserror}
             />
         </div>
     );
