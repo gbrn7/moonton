@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SubCategoryResource\Pages;
-use App\Filament\Resources\SubCategoryResource\RelationManagers;
-use App\Models\SubCategory;
+use App\Filament\Resources\SubscriptionPlanResource\Pages;
+use App\Filament\Resources\SubscriptionPlanResource\RelationManagers;
+use App\Models\SubscriptionPlan;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,26 +13,30 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SubCategoryResource extends Resource
+class SubscriptionPlanResource extends Resource
 {
-    protected static ?string $model = SubCategory::class;
+    protected static ?string $model = SubscriptionPlan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-hashtag';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 7;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('category_id')
-                    ->required()
-                    ->numeric(),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('price')
+                    ->required()
+                    ->numeric()
+                    ->prefix('Rp'),
+                Forms\Components\TextInput::make('active_period_in_months')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('features')
+                    ->required(),
             ]);
     }
 
@@ -40,11 +44,14 @@ class SubCategoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('category_id')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->prefix('Rp')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('active_period_in_months')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -59,17 +66,14 @@ class SubCategoryResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -84,18 +88,9 @@ class SubCategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSubCategories::route('/'),
-            'create' => Pages\CreateSubCategory::route('/create'),
-            'view' => Pages\ViewSubCategory::route('/{record}'),
-            'edit' => Pages\EditSubCategory::route('/{record}/edit'),
+            'index' => Pages\ListSubscriptionPlans::route('/'),
+            'create' => Pages\CreateSubscriptionPlan::route('/create'),
+            'edit' => Pages\EditSubscriptionPlan::route('/{record}/edit'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }
