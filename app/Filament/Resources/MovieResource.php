@@ -5,14 +5,22 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MovieResource\Pages;
 use App\Filament\Resources\MovieResource\RelationManagers;
 use App\Models\Movie;
+use App\Models\SubCategory;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class MovieResource extends Resource
@@ -38,11 +46,26 @@ class MovieResource extends Resource
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->rules(['unique:movies,slug']),
-                        Forms\Components\TextInput::make('category')
+                            ->unique(ignoreRecord: true),
+                        Forms\Components\Select::make('category_id')
                             ->required()
-                            ->maxLength(100)
-                            ->columnSpanFull(),
+                            ->relationship(name: 'category', titleAttribute: 'name')
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set) =>
+                            $set('sub_category_id', null))
+                            ->native(false),
+                        Forms\Components\Select::make('sub_category_id')
+                            ->required()
+                            ->options(
+                                fn (Get $get): Collection => SubCategory::query()->where('category_id', $get('category_id'))
+                                    ->pluck('name', 'id')
+                            )
+                            ->searchable()
+                            ->live()
+                            ->preload()
+                            ->native(false),
                     ])->columns(2),
                 Forms\Components\Section::make('Related Data')
                     ->description('Enter the related data')
@@ -57,6 +80,8 @@ class MovieResource extends Resource
                             ->default(0),
                         Forms\Components\Toggle::make('is_featured')
                             ->required(),
+                        Forms\Components\RichEditor::make('description')
+                            ->columnSpanFull(),
                     ])->columns(2),
                 Forms\Components\Section::make(('Thumbnail'))
                     ->description('Enter Thumbnail')
@@ -65,6 +90,7 @@ class MovieResource extends Resource
                             ->required()
                             ->image()
                             ->imageEditor()
+                            ->visibility('public')
                             ->imageEditorAspectRatios([
                                 '16:9',
                                 '4:3',
@@ -83,16 +109,16 @@ class MovieResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('category')
+                Tables\Columns\TextColumn::make('category.name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('video_url')
+                Tables\Columns\TextColumn::make('subCategory.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('rating')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_featured')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('thumbnail')
+                Tables\Columns\ImageColumn::make('thumbnail')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
@@ -109,15 +135,21 @@ class MovieResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+
                 ]),
             ]);
     }
@@ -129,13 +161,42 @@ class MovieResource extends Resource
         ];
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Movie Identity')
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('slug'),
+                        TextEntry::make('category.name'),
+                        TextEntry::make('subCategory.name'),
+                    ])->columns(2),
+                Section::make('Related Identity')
+                    ->schema([
+                        TextEntry::make('rating'),
+                        IconEntry::make('is_featured')->boolean(),
+                        ImageEntry::make('thumbnail'),
+                    ])->columns(2)
+            ]);
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListMovies::route('/'),
             'create' => Pages\CreateMovie::route('/create'),
-            'view' => Pages\ViewMovie::route('/{record}'),
+            // 'view' => Pages\ViewMovie::route('/{record}'),
             'edit' => Pages\EditMovie::route('/{record}/edit'),
         ];
+    }
+
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

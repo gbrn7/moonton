@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserSubscriptionResource\Pages;
-use App\Filament\Resources\UserSubscriptionResource\RelationManagers;
-use App\Models\UserSubscription;
+use App\Filament\Resources\SubCategoryResource\Pages;
+use App\Filament\Resources\SubCategoryResource\RelationManagers;
+use App\Models\SubCategory;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,33 +13,26 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserSubscriptionResource extends Resource
+class SubCategoryResource extends Resource
 {
-    protected static ?string $model = UserSubscription::class;
+    protected static ?string $model = SubCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-hashtag';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
+                Forms\Components\TextInput::make('category_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\Select::make('subscription_plan_id')
-                    ->relationship('subscriptionPlan', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('price')
+                Forms\Components\TextInput::make('name')
                     ->required()
-                    ->numeric()
-                    ->prefix('$'),
-                Forms\Components\DateTimePicker::make('expired_date'),
-                Forms\Components\TextInput::make('payment_status')
-                    ->required()
-                    ->maxLength(10)
-                    ->default('pending'),
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('description')
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -47,19 +40,10 @@ class UserSubscriptionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user_id')
+                Tables\Columns\TextColumn::make('category_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('subscriptionPlan.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('expired_date')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('payment_status')
+                Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -75,7 +59,7 @@ class UserSubscriptionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -84,6 +68,8 @@ class UserSubscriptionResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -98,10 +84,18 @@ class UserSubscriptionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUserSubscriptions::route('/'),
-            'create' => Pages\CreateUserSubscription::route('/create'),
-            'view' => Pages\ViewUserSubscription::route('/{record}'),
-            'edit' => Pages\EditUserSubscription::route('/{record}/edit'),
+            'index' => Pages\ListSubCategories::route('/'),
+            'create' => Pages\CreateSubCategory::route('/create'),
+            'view' => Pages\ViewSubCategory::route('/{record}'),
+            'edit' => Pages\EditSubCategory::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }
