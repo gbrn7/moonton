@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class MovieResource extends Resource
 {
@@ -106,6 +108,12 @@ class MovieResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+                ExportBulkAction::make()->exports([
+                    ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export'),
+                    ExcelExport::make('form')->fromForm()->withFilename(date('Y-m-d') . ' - export'),
+                ])
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
@@ -166,7 +174,10 @@ class MovieResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
-
+                    ExportBulkAction::make()->exports([
+                        ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export'),
+                        ExcelExport::make('form')->fromForm()->withFilename(date('Y-m-d') . ' - export'),
+                    ])
                 ]),
             ]);
     }

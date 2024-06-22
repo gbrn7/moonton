@@ -6,8 +6,8 @@ use App\Filament\Resources\RoleResource\Pages;
 use App\Filament\Resources\RoleResource\RelationManagers;
 use App\Models\Role;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -15,6 +15,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class RoleResource extends Resource
 {
@@ -43,6 +45,12 @@ class RoleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+                ExportBulkAction::make()->exports([
+                    ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export'),
+                    ExcelExport::make('form')->fromForm()->withFilename(date('Y-m-d') . ' - export'),
+                ])
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
@@ -69,6 +77,10 @@ class RoleResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()->exports([
+                        ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export'),
+                        ExcelExport::make('form')->fromForm()->withFilename(date('Y-m-d') . ' - export'),
+                    ])
                 ]),
             ]);
     }
