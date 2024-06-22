@@ -17,6 +17,8 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -39,7 +41,7 @@ class MovieResource extends Resource
                     ->description('Enter the movie identity')
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->live()
+                            ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
                             ->required()
                             ->maxLength(100),
@@ -136,6 +138,21 @@ class MovieResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                SelectFilter::make('category')
+                    ->relationship('category', 'name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('sub_category')
+                    ->relationship('subCategory', 'name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('is_featured')
+                    ->options([
+                        1 => "Active",
+                        0 => "Inactive"
+                    ])
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
