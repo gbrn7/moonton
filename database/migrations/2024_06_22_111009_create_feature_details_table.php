@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscription_plans', function (Blueprint $table) {
+        Schema::create('feature_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('subscription_plan_id')->constrained();
             $table->string('name');
-            $table->unsignedInteger('price'); // non minus number
-            $table->unsignedSmallInteger('active_period_in_months');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscription_plans');
+        Schema::dropIfExists('feature_details');
     }
 };

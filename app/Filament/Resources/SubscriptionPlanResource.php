@@ -7,6 +7,9 @@ use App\Filament\Resources\SubscriptionPlanResource\RelationManagers;
 use App\Models\SubscriptionPlan;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -30,18 +33,27 @@ class SubscriptionPlanResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('Rp'),
-                Forms\Components\TextInput::make('active_period_in_months')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('features')
-                    ->required(),
+                Forms\Components\Section::make('Subscription Plan Data')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('price')
+                            ->required()
+                            ->numeric()
+                            ->prefix('Rp'),
+                        Forms\Components\TextInput::make('active_period_in_months')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\Repeater::make('featuresDetail')
+                            ->relationship('featureDetail')
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->label('Feature'),
+                            ])
+
+                    ]),
             ]);
     }
 
@@ -80,7 +92,9 @@ class SubscriptionPlanResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -90,6 +104,21 @@ class SubscriptionPlanResource extends Resource
                         ExcelExport::make('form')->fromForm()->withFilename(date('Y-m-d') . ' - export'),
                     ])
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Movie Identity')
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('price'),
+                        TextEntry::make('active_period_in_months'),
+                        TextEntry::make('featureDetail.name')->listWithLineBreaks()
+                            ->bulleted(),
+                    ])->columns(2),
             ]);
     }
 
