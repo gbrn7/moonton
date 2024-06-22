@@ -19,4 +19,14 @@ class EditSubCategory extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+
+    // public function beforeCreate()
+    // {
+    //     dd($this->data);
+    // }
+
+    // public function afterCreate()
+    // {
+    //     dd($this->recorde);
+    // }
 }
