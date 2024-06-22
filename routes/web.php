@@ -6,6 +6,8 @@ use App\Http\Controllers\User\MovieController;
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\User\SubscriptionPlanController;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -29,7 +31,13 @@ use Inertia\Inertia;
 Route::post('/midtrans/notification', [SubscriptionPlanController::class, 'midtransCallback']);
 
 
-Route::redirect('/', '/login');
+Route::get('/', function (Request $request) {
+    if (Auth::user() && Auth::user()->hasAnyRole(['superAdmin', 'admin'])) {
+        return redirect()->route('filament.admin.auth.login');
+    }
+
+    return redirect()->route('login');
+});
 
 Route::middleware(['auth', 'role:user'])->prefix('dashboard')->name('user.dashboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');

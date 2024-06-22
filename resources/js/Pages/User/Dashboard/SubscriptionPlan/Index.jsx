@@ -62,7 +62,7 @@ export default function SubscriptionPlan({ auth, subscriptionPlans, env }) {
                             durationInMonth={
                                 subscriptionPlans.active_period_in_months
                             }
-                            features={JSON.parse(subscriptionPlan.features)}
+                            features={subscriptionPlan.feature_detail}
                             isPremium={subscriptionPlan.name === "Premium"}
                             key={subscriptionPlan.id}
                             onSelectSubscription={() =>
