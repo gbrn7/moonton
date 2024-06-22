@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedInteger('price'); // non minus number
             $table->unsignedSmallInteger('active_period_in_months');
-            $table->json('features');
             $table->timestamps();
             $table->softDeletes();
         });

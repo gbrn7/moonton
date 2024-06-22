@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             RoleTableSeeder::class,
             UserTableSeeder::class,
             SubscriptionPlanTableSeeder::class,
+            FeatureDetailSeeder::class,
+            CategoryTableSeeder::class,
+            SubCategorySeeder::class,
             // MovieTableSeeder::class,
         ]);
     }

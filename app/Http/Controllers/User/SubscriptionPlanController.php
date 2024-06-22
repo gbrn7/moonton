@@ -26,7 +26,7 @@ class SubscriptionPlanController extends Controller
     }
     public function index()
     {
-        $subscriptinPlan = SubscriptionPlan::all();
+        $subscriptinPlan = SubscriptionPlan::with('featureDetail')->get();
 
         return inertia('User/Dashboard/SubscriptionPlan/Index', [
             'subscriptionPlans' => $subscriptinPlan,

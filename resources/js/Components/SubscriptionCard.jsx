@@ -29,10 +29,10 @@ export default function SubscriptionCard({
                         {features.map((feature, index) => (
                             <div
                                 className="flex items-center gap-2"
-                                key={`${index}-${id}-${feature}`}
+                                key={`${index}-${id}-${feature.name}`}
                             >
                                 <img src="/icons/ic_tick.svg" alt="img" />
-                                <span className="text-sm">{feature}</span>
+                                <span className="text-sm">{feature.name}</span>
                             </div>
                         ))}
                     </div>
@@ -66,10 +66,10 @@ export default function SubscriptionCard({
                         {features.map((feature, index) => (
                             <div
                                 className="flex items-center gap-2"
-                                key={`${index}-${id}-${feature}`}
+                                key={`${index}-${id}-${feature.name}`}
                             >
                                 <img src="/icons/ic_tick.svg" alt="img" />
-                                <span className="text-sm">{feature}</span>
+                                <span className="text-sm">{feature.name}</span>
                             </div>
                         ))}
                     </div>
