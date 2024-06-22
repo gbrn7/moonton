@@ -19,27 +19,24 @@ class SubscriptionPlanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 7;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('price')
-                            ->required()
-                            ->numeric()
-                            ->prefix('Rp'),
-                        Forms\Components\TextInput::make('active_period_in_months')
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\TextInput::make('features')
-                            ->required(),
-                    ]),
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('price')
+                    ->required()
+                    ->numeric()
+                    ->prefix('Rp'),
+                Forms\Components\TextInput::make('active_period_in_months')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('features')
+                    ->required(),
             ]);
     }
 
@@ -72,9 +69,7 @@ class SubscriptionPlanResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -94,8 +89,8 @@ class SubscriptionPlanResource extends Resource
     {
         return [
             'index' => Pages\ListSubscriptionPlans::route('/'),
-            // 'create' => Pages\CreateSubscriptionPlan::route('/create'),
-            // 'edit' => Pages\EditSubscriptionPlan::route('/{record}/edit'),
+            'create' => Pages\CreateSubscriptionPlan::route('/create'),
+            'edit' => Pages\EditSubscriptionPlan::route('/{record}/edit'),
         ];
     }
 }
