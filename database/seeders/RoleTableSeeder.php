@@ -14,6 +14,7 @@ class RoleTableSeeder extends Seeder
     public function run(): void
     {
         Role::insert([
+            ['name' => 'superAdmin', 'guard_name' => 'web'],
             ['name' => 'admin', 'guard_name' => 'web'],
             ['name' => 'user', 'guard_name' => 'web'],
         ]);
