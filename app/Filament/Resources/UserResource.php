@@ -19,6 +19,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
@@ -27,6 +28,8 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
+
+    protected static ?string $navigationGroup = 'User Management';
 
     protected static ?int $navigationSort = 1;
 
@@ -62,7 +65,7 @@ class UserResource extends Resource
     {
         return $table
             ->headerActions([
-                ExportBulkAction::make()->exports([
+                ExportAction::make()->exports([
                     ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export'),
                     ExcelExport::make('form')->fromForm()->withFilename(date('Y-m-d') . ' - export'),
                 ])

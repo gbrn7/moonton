@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
@@ -20,6 +21,8 @@ class SubCategoryResource extends Resource
     protected static ?string $model = SubCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-hashtag';
+
+    protected static ?string $navigationGroup = 'Movie Management';
 
     protected static ?int $navigationSort = 5;
 
@@ -47,7 +50,7 @@ class SubCategoryResource extends Resource
     {
         return $table
             ->headerActions([
-                ExportBulkAction::make()->exports([
+                ExportAction::make()->exports([
                     ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export'),
                     ExcelExport::make('form')->fromForm()->withFilename(date('Y-m-d') . ' - export'),
                 ])

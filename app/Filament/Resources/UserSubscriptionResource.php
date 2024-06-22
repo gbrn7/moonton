@@ -22,6 +22,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
@@ -30,6 +31,8 @@ class UserSubscriptionResource extends Resource
     protected static ?string $model = UserSubscription::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Subscription Management';
 
     protected static ?int $navigationSort = 7;
 
@@ -77,7 +80,7 @@ class UserSubscriptionResource extends Resource
     {
         return $table
             ->headerActions([
-                ExportBulkAction::make()->exports([
+                ExportAction::make()->exports([
                     ExcelExport::make('table')->fromTable()->withFilename(date('Y-m-d') . ' - export'),
                     ExcelExport::make('form')->fromForm()->withFilename(date('Y-m-d') . ' - export'),
                 ])
